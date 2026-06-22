@@ -1,0 +1,38 @@
+# Backend Development Dockerfile
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install dependencies
+COPY pyproject.toml ./
+RUN pip install --upgrade pip && \
+    pip install \
+    fastapi uvicorn[standard] sqlalchemy[asyncio] asyncpg psycopg2-binary alembic \
+    pydantic pydantic-settings python-jose passlib[bcrypt] PyJWT \
+    redis upstash-redis httpx \
+    openai anthropic litellm tiktoken \
+    sentence-transformers numpy \
+    pypdf python-docx openpyxl markdown beautifulsoup4 trafilatura \
+    boto3 aioboto3 \
+    sentry-sdk[fastapi] structlog \
+    opentelemetry-api opentelemetry-sdk opentelemetry-instrumentation-fastapi \
+    celery tenacity orjson websockets python-dateutil pyyaml \
+    pgvector email-validator python-multipart
+
+# Copy app
+COPY . .
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
