@@ -110,10 +110,11 @@ class Settings(BaseSettings):
         return url
 
 
-# Load from .env.secrets in development
-_env_file = "/home/z/my-project/ai-norx/.env.secrets"
+# Load from .env.local in development (if exists)
+# In production (Railway/Vercel), env vars come from the platform
+_env_file = os.environ.get("ENV_FILE", ".env")
 if os.path.exists(_env_file) and not os.environ.get("DATABASE_URL"):
-    # Load secrets file into environment
+    # Load local .env file into environment
     with open(_env_file) as f:
         for line in f:
             line = line.strip()
