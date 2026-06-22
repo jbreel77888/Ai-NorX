@@ -121,8 +121,8 @@ async def get_or_create_user_from_clerk(
     user = result.scalar_one_or_none()
 
     if user:
-        # Update last login time
-        user.last_login_at = datetime.now(timezone.utc)
+        # Update last login time (use naive datetime to match DB schema)
+        user.last_login_at = datetime.utcnow()
         await db.flush()
 
         # Get tenant
@@ -181,7 +181,7 @@ async def get_or_create_user_from_clerk(
         avatar_url=avatar_url,
         role="admin",  # First user is admin
         is_active=True,
-        last_login_at=datetime.now(timezone.utc),
+        last_login_at=datetime.utcnow(),
     )
     db.add(user)
     await db.flush()
