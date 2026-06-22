@@ -35,9 +35,6 @@ export default function RootLayout({
           card: "shadow-xl rounded-2xl border-0",
         },
       }}
-      localization={{
-        locale: "ar",
-      }}
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
       afterSignInUrl="/chat"
