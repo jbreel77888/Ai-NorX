@@ -93,20 +93,24 @@ class Settings(BaseSettings):
 
     @property
     def async_database_url(self) -> str:
-        """Ensure DATABASE_URL uses asyncpg driver."""
+        """Ensure DATABASE_URL uses asyncpg driver with proper SSL param."""
         url = self.DATABASE_URL
         if url.startswith("postgresql://"):
-            return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        # asyncpg uses 'ssl' not 'sslmode'
+        if "asyncpg" in url and "sslmode=" in url:
+            url = url.replace("sslmode=require", "ssl=require")
         return url
 
     @property
     def sync_database_url(self) -> str:
-        """Get sync DATABASE_URL for Alembic."""
+        """Get sync DATABASE_URL for Alembic (psycopg2)."""
         if self.DATABASE_URL_SYNC:
             return self.DATABASE_URL_SYNC
         url = self.DATABASE_URL
         if "asyncpg" in url:
-            return url.replace("postgresql+asyncpg://", "postgresql://", 1)
+            url = url.replace("postgresql+asyncpg://", "postgresql://", 1)
+        # psycopg2 uses 'sslmode' (keep as is)
         return url
 
 
