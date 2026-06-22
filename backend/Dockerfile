@@ -41,6 +41,7 @@ RUN pip install --upgrade pip && \
     python-jose[cryptography]>=3.3.0 \
     passlib[bcrypt]>=1.7.4 \
     PyJWT>=2.10.0 \
+    cryptography>=43.0.0 \
     httpx>=0.28.0 \
     pydantic>=2.10.0 \
     pydantic-settings>=2.6.0 \

@@ -1,29 +1,39 @@
 "use client";
 
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, MessageSquare, Settings, Bot, Menu, X } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@clerk/nextjs";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Plus, MessageSquare, Settings, Bot, Menu, X, Loader2 } from "lucide-react";
 import { conversationsApi, Conversation } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 export function Sidebar() {
   const router = useRouter();
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
   const [token, setToken] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
 
+  // Only fetch token once auth is loaded and user is signed in
   useEffect(() => {
-    getToken().then(setToken);
-  }, [getToken]);
+    let cancelled = false;
+    if (!isLoaded || !isSignedIn) return;
 
-  const { data: conversations } = useQuery({
+    getToken().then((t) => {
+      if (!cancelled && t) setToken(t);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [getToken, isLoaded, isSignedIn]);
+
+  const { data: conversations, isLoading } = useQuery({
     queryKey: ["conversations"],
     queryFn: () => conversationsApi.list(token),
     enabled: !!token,
+    retry: false,
   });
 
   const newConversationMutation = useMutation({
@@ -33,7 +43,19 @@ export function Sidebar() {
     onSuccess: (conv) => {
       router.push(`/chat/${conv.id}`);
     },
+    onError: (error) => {
+      console.error("Failed to create conversation:", error);
+    },
   });
+
+  // Show loading state until auth is ready
+  if (!isLoaded) {
+    return (
+      <aside className="w-72 bg-card border-l flex flex-col h-full items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      </aside>
+    );
+  }
 
   return (
     <>
@@ -79,10 +101,14 @@ export function Sidebar() {
 
           <Button
             onClick={() => newConversationMutation.mutate()}
-            disabled={newConversationMutation.isPending}
+            disabled={newConversationMutation.isPending || !token}
             className="w-full"
           >
-            <Plus className="w-4 h-4 ml-2" />
+            {newConversationMutation.isPending ? (
+              <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+            ) : (
+              <Plus className="w-4 h-4 ml-2" />
+            )}
             محادثة جديدة
           </Button>
         </div>
@@ -92,6 +118,11 @@ export function Sidebar() {
           <div className="text-xs font-medium text-muted-foreground px-2 py-2">
             المحادثات
           </div>
+          {isLoading && (
+            <div className="flex justify-center p-4">
+              <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+            </div>
+          )}
           {conversations?.map((conv) => (
             <ConversationItem
               key={conv.id}
@@ -102,9 +133,14 @@ export function Sidebar() {
               }}
             />
           ))}
-          {!conversations?.length && (
+          {!isLoading && !conversations?.length && token && (
             <div className="text-center text-muted-foreground text-sm p-4">
               لا توجد محادثات بعد
+            </div>
+          )}
+          {!token && isSignedIn && (
+            <div className="text-center text-muted-foreground text-sm p-4">
+              جارٍ التحميل...
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { ChatLayout } from "@/components/chat/chat-layout";
 import { Sidebar } from "@/components/chat/sidebar";
 
@@ -10,12 +10,15 @@ export default async function ChatPage() {
     redirect("/sign-in");
   }
 
+  // Get user info
+  const user = await currentUser();
+
   return (
     <ChatLayout>
       <Sidebar />
-      <div className="flex-1 flex items-center justify-center bg-muted/30">
+      <div className="flex-1 flex flex-col items-center justify-center bg-muted/30">
         <div className="text-center max-w-2xl mx-auto p-8">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-lg">
             <svg
               className="w-10 h-10 text-white"
               fill="none"
@@ -31,26 +34,42 @@ export default async function ChatPage() {
             </svg>
           </div>
           <h1 className="text-4xl font-bold mb-3">
-            مرحباً بك في Ai NorX
+            مرحباً {user?.firstName || user?.username || "بك"} 👋
           </h1>
           <p className="text-muted-foreground text-lg mb-8">
             منصة الوكلاء الأذكياء العربية. اختر محادثة من القائمة أو ابدأ محادثة جديدة.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl border bg-card hover:shadow-md transition-shadow cursor-pointer">
-              <div className="text-2xl mb-2">💬</div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-xl mx-auto">
+            <a
+              href="/chat/new"
+              className="p-6 rounded-xl border bg-card hover:shadow-md hover:border-primary/50 transition-all cursor-pointer block"
+            >
+              <div className="text-3xl mb-3">💬</div>
               <h3 className="font-semibold mb-1">ابدأ محادثة جديدة</h3>
               <p className="text-sm text-muted-foreground">
                 تحدث مع أحد الوكلاء الأذكياء
               </p>
-            </div>
-            <div className="p-4 rounded-xl border bg-card hover:shadow-md transition-shadow cursor-pointer">
-              <div className="text-2xl mb-2">🤖</div>
+            </a>
+            <a
+              href="/agents"
+              className="p-6 rounded-xl border bg-card hover:shadow-md hover:border-primary/50 transition-all cursor-pointer block"
+            >
+              <div className="text-3xl mb-3">🤖</div>
               <h3 className="font-semibold mb-1">أنشئ وكيل جديد</h3>
               <p className="text-sm text-muted-foreground">
                 خصص وكيلك الذكي الخاص
               </p>
-            </div>
+            </a>
+          </div>
+
+          <div className="mt-8 text-xs text-muted-foreground">
+            <p>
+              المتصل بـ:{" "}
+              <span className="font-mono">
+                {process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}
+              </span>
+            </p>
           </div>
         </div>
       </div>
