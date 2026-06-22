@@ -1,8 +1,6 @@
 /**
  * API client for backend communication
  */
-import { Clerk } from "@clerk/nextjs/server";
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export class ApiClient {
@@ -12,34 +10,25 @@ export class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private async getHeaders(): Promise<HeadersInit> {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-
-    if (typeof window !== "undefined") {
-      // Client-side: get Clerk token
-      try {
-        const { getToken } = await import("@clerk/nextjs");
-        // This will be called from client components
-      } catch {}
-    }
-
-    return headers;
-  }
-
   async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    token?: string
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
 
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(options.headers as Record<string, string>),
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(url, {
       ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
+      headers,
     });
 
     if (!response.ok) {
@@ -55,55 +44,31 @@ export class ApiClient {
   }
 
   async get<T>(endpoint: string, token?: string): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "GET",
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    });
+    return this.request<T>(endpoint, { method: "GET" }, token);
   }
 
   async post<T>(endpoint: string, data?: any, token?: string): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "POST",
-      body: data ? JSON.stringify(data) : undefined,
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    });
+    return this.request<T>(
+      endpoint,
+      { method: "POST", body: data ? JSON.stringify(data) : undefined },
+      token
+    );
   }
 
   async patch<T>(endpoint: string, data: any, token?: string): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    });
+    return this.request<T>(
+      endpoint,
+      { method: "PATCH", body: JSON.stringify(data) },
+      token
+    );
   }
 
   async delete<T>(endpoint: string, token?: string): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "DELETE",
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    });
+    return this.request<T>(endpoint, { method: "DELETE" }, token);
   }
 }
 
 export const apiClient = new ApiClient();
-
-// ━━━━━ API Functions ━━━━━
-
-export async function getApiToken(): Promise<string> {
-  // This function should only be called from client components
-  // Use the useAuth() hook from @clerk/nextjs in components instead
-  if (typeof window === "undefined") {
-    return "";
-  }
-  try {
-    const { Clerk } = await import("@clerk/clerk-js");
-    const clerk = await Clerk.load();
-    const token = await clerk.session?.getToken();
-    return token || "";
-  } catch {
-    return "";
-  }
-}
 
 // ━━━ Types ━━━
 
@@ -161,8 +126,7 @@ export interface ModelInfo {
 // ━━━ Agents API ━━━
 
 export const agentsApi = {
-  list: (token: string) =>
-    apiClient.get<Agent[]>("/api/v1/agents", token),
+  list: (token: string) => apiClient.get<Agent[]>("/api/v1/agents", token),
 
   get: (id: string, token: string) =>
     apiClient.get<Agent>(`/api/v1/agents/${id}`, token),
@@ -177,14 +141,16 @@ export const agentsApi = {
     apiClient.delete(`/api/v1/agents/${id}`, token),
 
   models: (token: string) =>
-    apiClient.get<Record<string, ModelInfo[]>>("/api/v1/agents/models/list", token),
+    apiClient.get<Record<string, ModelInfo[]>>(
+      "/api/v1/agents/models/list",
+      token
+    ),
 };
 
 // ━━━ Conversations API ━━━
 
 export const conversationsApi = {
-  list: (token: string) =>
-    apiClient.get<Conversation[]>("/api/v1/conversations", token),
+  list: (token: string) => apiClient.get<Conversation[]>("/api/v1/conversations", token),
 
   get: (id: string, token: string) =>
     apiClient.get<Conversation>(`/api/v1/conversations/${id}`, token),
