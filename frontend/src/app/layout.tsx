@@ -19,7 +19,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: "#2563eb",
+          colorText: "#0f172a",
+          colorBackground: "#ffffff",
+          colorInputBackground: "#ffffff",
+          colorInputText: "#0f172a",
+          fontFamily: "'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif",
+        },
+        elements: {
+          formButtonPrimary:
+            "bg-blue-600 hover:bg-blue-700 text-sm normal-case",
+          card: "shadow-xl rounded-2xl border-0",
+        },
+      }}
+      localization={{
+        locale: "ar",
+      }}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+      afterSignInUrl="/chat"
+      afterSignUpUrl="/chat"
+    >
       <html lang="ar" dir="rtl" suppressHydrationWarning>
         <head>
           <link
