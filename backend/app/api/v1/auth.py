@@ -42,7 +42,7 @@ async def get_current_user_info(
         role=user.role,
         tenant_id=str(tenant.id),
         tenant_name=tenant.name,
-        plan=tenant.plan.value,
+        plan=tenant.plan,
     )
 
 

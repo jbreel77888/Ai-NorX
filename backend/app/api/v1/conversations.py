@@ -206,7 +206,7 @@ async def list_messages(
     return [
         MessageResponse(
             id=str(m.id),
-            role=m.role.value,
+            role=m.role,
             content=m.content,
             reasoning=m.reasoning,
             tool_calls=m.tool_calls or [],
