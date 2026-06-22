@@ -8,11 +8,11 @@ import { conversationsApi, agentsApi } from "@/lib/api";
 
 export default function NewChatPage() {
   const router = useRouter();
-  const { getToken, isSignedIn } = useAuth();
-  const [error, setError] = useState<string>("");
+  const { isLoaded, isSignedIn, getToken } = useAuth();
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!isSignedIn) return;
+    if (!isLoaded || !isSignedIn) return;
     let active = true;
 
     (async () => {
@@ -22,7 +22,7 @@ export default function NewChatPage() {
 
         const agents = await agentsApi.list(token);
         if (!agents?.length) {
-          if (active) setError("لا يوجد وكلاء متاحون. أنشئ وكيل أولاً.");
+          if (active) setError("لا يوجد وكلاء متاحون");
           return;
         }
 
@@ -34,7 +34,7 @@ export default function NewChatPage() {
         if (active) router.replace(`/chat/${conversation.id}`);
       } catch (err) {
         if (active) {
-          setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع");
+          setError(err instanceof Error ? err.message : "حدث خطأ");
         }
       }
     })();
@@ -42,7 +42,15 @@ export default function NewChatPage() {
     return () => {
       active = false;
     };
-  }, [isSignedIn, getToken, router]);
+  }, [isLoaded, isSignedIn, getToken, router]);
+
+  if (!isLoaded) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex items-center justify-center bg-muted/30">

@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Plus, Bot, Trash2, Edit, MessageSquare } from "lucide-react";
-import { agentsApi, Agent } from "@/lib/api";
+import { Plus, Bot, MessageSquare, Loader2 } from "lucide-react";
+import { agentsApi, conversationsApi, Agent } from "@/lib/api";
 import { Sidebar } from "@/components/chat/sidebar";
 import { ChatLayout } from "@/components/chat/chat-layout";
 import { Button } from "@/components/ui/button";
@@ -19,22 +19,36 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/toaster";
+import { toast } from "sonner";
 
 export default function AgentsPage() {
   const router = useRouter();
-  const { getToken } = useAuth();
-  const [token, setToken] = useState<string>("");
+  const { isLoaded, isSignedIn, getToken } = useAuth();
+  const [token, setToken] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   useEffect(() => {
-    getToken().then(setToken);
-  }, [getToken]);
+    if (!isSignedIn) return;
+    let active = true;
+    getToken().then((t) => {
+      if (active && t) setToken(t);
+    });
+    return () => {
+      active = false;
+    };
+  }, [isSignedIn, getToken]);
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push("/sign-in");
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   const { data: agents } = useQuery({
-    queryKey: ["agents"],
+    queryKey: ["agents", token],
     queryFn: () => agentsApi.list(token),
     enabled: !!token,
+    retry: false,
   });
 
   const createMutation = useMutation({
@@ -42,12 +56,19 @@ export default function AgentsPage() {
     onSuccess: () => {
       toast.success("تم إنشاء الوكيل بنجاح");
       setIsCreateOpen(false);
-      router.refresh();
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
+    onError: (error: Error) => toast.error(error.message),
   });
+
+  if (!isLoaded) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isSignedIn) return null;
 
   return (
     <ChatLayout>
@@ -91,10 +112,12 @@ function AgentCard({ agent, token }: { agent: Agent; token: string }) {
   const router = useRouter();
 
   const startChat = async () => {
-    // Create a conversation and navigate to it
-    const { conversationsApi } = await import("@/lib/api");
-    const conv = await conversationsApi.create({ agent_id: agent.id }, token);
-    router.push(`/chat/${conv.id}`);
+    try {
+      const conv = await conversationsApi.create({ agent_id: agent.id }, token);
+      router.push(`/chat/${conv.id}`);
+    } catch (err) {
+      toast.error("فشل إنشاء المحادثة");
+    }
   };
 
   return (
@@ -111,12 +134,10 @@ function AgentCard({ agent, token }: { agent: Agent; token: string }) {
       <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
         {agent.description || "لا يوجد وصف"}
       </p>
-      <div className="flex gap-2">
-        <Button size="sm" className="flex-1" onClick={startChat}>
-          <MessageSquare className="w-4 h-4 ml-1" />
-          محادثة
-        </Button>
-      </div>
+      <Button size="sm" className="w-full" onClick={startChat}>
+        <MessageSquare className="w-4 h-4 ml-1" />
+        محادثة
+      </Button>
     </div>
   );
 }
@@ -136,11 +157,7 @@ function CreateAgentDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({
-      name,
-      description,
-      system_prompt: systemPrompt,
-    });
+    onSubmit({ name, description, system_prompt: systemPrompt });
   };
 
   return (

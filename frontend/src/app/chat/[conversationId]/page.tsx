@@ -17,8 +17,8 @@ import { cn } from "@/lib/utils";
 export default function ConversationPage() {
   const params = useParams();
   const router = useRouter();
-  const { getToken, userId } = useAuth();
-  const [token, setToken] = useState<string>("");
+  const { isLoaded, isSignedIn, getToken } = useAuth();
+  const [token, setToken] = useState("");
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -30,37 +30,52 @@ export default function ConversationPage() {
 
   const conversationId = params?.conversationId as string;
 
+  // Get token
   useEffect(() => {
-    getToken().then(setToken);
-  }, [getToken]);
+    if (!isSignedIn) return;
+    let active = true;
+    getToken().then((t) => {
+      if (active && t) setToken(t);
+    });
+    return () => {
+      active = false;
+    };
+  }, [isSignedIn, getToken]);
 
-  // Load conversation messages
+  // Redirect if not signed in
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push("/sign-in");
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  // Load conversation
   const { data: conversation } = useQuery({
-    queryKey: ["conversation", conversationId],
+    queryKey: ["conversation", conversationId, token],
     queryFn: () => conversationsApi.get(conversationId, token),
     enabled: !!token && !!conversationId,
+    retry: false,
   });
 
   const { data: dbMessages } = useQuery({
-    queryKey: ["messages", conversationId],
+    queryKey: ["messages", conversationId, token],
     queryFn: () => conversationsApi.messages(conversationId, token),
     enabled: !!token && !!conversationId,
+    retry: false,
   });
 
   useEffect(() => {
-    if (dbMessages) {
-      setMessages(dbMessages);
-    }
+    if (dbMessages) setMessages(dbMessages);
   }, [dbMessages]);
 
-  // Load agent for this conversation
   const { data: agent } = useQuery({
-    queryKey: ["agent", conversation?.agent_id],
+    queryKey: ["agent", conversation?.agent_id, token],
     queryFn: () => agentsApi.get(conversation!.agent_id!, token),
     enabled: !!token && !!conversation?.agent_id,
+    retry: false,
   });
 
-  // Auto-scroll to bottom
+  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent]);
@@ -84,7 +99,6 @@ export default function ConversationPage() {
 
       switch (data.type) {
         case "auth_success":
-          console.log("WebSocket authenticated");
           break;
         case "text":
           setStreamingContent((prev) => prev + data.content);
@@ -123,8 +137,9 @@ export default function ConversationPage() {
           ]);
           setStreamingContent("");
           setIsStreaming(false);
-          // Invalidate queries to refetch
-          queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
+          queryClient.invalidateQueries({
+            queryKey: ["messages", conversationId],
+          });
           queryClient.invalidateQueries({ queryKey: ["conversations"] });
           break;
         case "error":
@@ -138,8 +153,7 @@ export default function ConversationPage() {
       }
     };
 
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
+    ws.onerror = () => {
       setError("فشل الاتصال بالخادم");
       setIsStreaming(false);
     };
@@ -147,11 +161,10 @@ export default function ConversationPage() {
     return () => {
       ws.close();
     };
-  }, [token, conversationId, agent, input, streamingContent, queryClient]);
+  }, [token, conversationId, agent, queryClient]);
 
   const handleSend = () => {
     if (!input.trim() || isStreaming || !agent) return;
-
     setError(null);
     setIsStreaming(true);
     setStreamingContent("");
@@ -173,11 +186,23 @@ export default function ConversationPage() {
     }
   };
 
+  // Show loading state while Clerk loads
+  if (!isLoaded) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    return null;
+  }
+
   return (
     <ChatLayout>
       <Sidebar />
       <div className="flex-1 flex flex-col h-full">
-        {/* Header */}
         <header className="border-b p-4 flex items-center gap-3">
           <Button
             variant="ghost"
@@ -198,7 +223,6 @@ export default function ConversationPage() {
           </div>
         </header>
 
-        {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
           {messages.length === 0 && !streamingContent && (
             <div className="text-center py-12 text-muted-foreground">
@@ -230,14 +254,12 @@ export default function ConversationPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Error */}
         {error && (
           <div className="px-4 py-2 bg-destructive/10 text-destructive text-sm text-center">
             {error}
           </div>
         )}
 
-        {/* Input */}
         <div className="border-t p-4">
           <div className="flex gap-2 items-end max-w-3xl mx-auto">
             <Textarea
