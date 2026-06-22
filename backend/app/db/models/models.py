@@ -354,8 +354,8 @@ class Document(Base):
     indexing_status: Mapped[str] = mapped_column(String(50), default="pending")  # pending, indexing, indexed, failed
     chunk_count: Mapped[int] = mapped_column(Integer, default=0)
 
-    # Metadata
-    metadata: Mapped[Dict] = mapped_column(JSONB, default=dict)
+    # Metadata (renamed from 'metadata' which is reserved in SQLAlchemy)
+    doc_metadata: Mapped[Dict] = mapped_column("metadata", JSONB, default=dict)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
@@ -386,8 +386,8 @@ class DocumentChunk(Base):
     # Vector embedding (1536 for OpenAI, 1024 for BGE-M3)
     embedding: Mapped[Optional[Any]] = mapped_column(Vector(1024))
 
-    # Metadata
-    metadata: Mapped[Dict] = mapped_column(JSONB, default=dict)
+    # Metadata (renamed from 'metadata' which is reserved in SQLAlchemy)
+    chunk_metadata: Mapped[Dict] = mapped_column("metadata", JSONB, default=dict)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
@@ -423,7 +423,7 @@ class MemoryEntry(Base):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     summary: Mapped[Optional[str]] = mapped_column(Text)
     is_consolidated: Mapped[bool] = mapped_column(Boolean, default=False)
-    metadata: Mapped[Dict] = mapped_column(JSONB, default=dict)
+    entry_metadata: Mapped[Dict] = mapped_column("metadata", JSONB, default=dict)
 
     timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
 
@@ -470,7 +470,7 @@ class UsageRecord(Base):
 
     usage_type: Mapped[str] = mapped_column(String(50), nullable=False)  # messages, tokens, storage
     amount: Mapped[int] = mapped_column(Integer, nullable=False)
-    metadata: Mapped[Dict] = mapped_column(JSONB, default=dict)
+    usage_metadata: Mapped[Dict] = mapped_column("metadata", JSONB, default=dict)
     timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
 
     __table_args__ = (
@@ -503,7 +503,7 @@ class AuditLog(Base):
     severity: Mapped[str] = mapped_column(String(20), default="info")
     ip_address: Mapped[Optional[str]] = mapped_column(String(50))
     user_agent: Mapped[Optional[str]] = mapped_column(String(512))
-    metadata: Mapped[Dict] = mapped_column(JSONB, default=dict)
+    audit_metadata: Mapped[Dict] = mapped_column("metadata", JSONB, default=dict)
 
     __table_args__ = (
         Index("idx_audit_tenant_chain_id", "tenant_id", "chain_key", "id"),
