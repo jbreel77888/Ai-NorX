@@ -1,20 +1,23 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Plus, MessageSquare, Settings, Bot, Menu, X } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { useAuth, useUser, UserButton } from "@clerk/nextjs";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Plus, MessageSquare, Settings, Search, X } from "lucide-react";
 import { conversationsApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-export function Sidebar() {
+export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { getToken, isSignedIn } = useAuth();
-  const [token, setToken] = useState<string>("");
-  const [isOpen, setIsOpen] = useState(false);
+  const { user } = useUser();
+  const [token, setToken] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!isSignedIn) return;
@@ -32,104 +35,146 @@ export function Sidebar() {
     queryFn: () => conversationsApi.list(token),
     enabled: !!token,
     retry: false,
-    staleTime: 30000,
+    staleTime: 10000,
   });
 
   const newConversationMutation = useMutation({
     mutationFn: () => conversationsApi.create({ title: "محادثة جديدة" }, token),
-    onSuccess: (conv) => router.push(`/chat/${conv.id}`),
+    onSuccess: (conv) => {
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      router.push(`/chat/${conv.id}`);
+      onNavigate?.();
+    },
   });
+
+  const filteredConversations = conversations?.filter((c) =>
+    c.title?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="flex h-full flex-col bg-secondary/40">
+      {/* Header */}
+      <div className="flex items-center justify-between p-3 border-b border-border">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center">
+            <span className="text-white font-bold text-sm">N</span>
+          </div>
+          <span className="font-semibold">Ai NorX</span>
+        </div>
+        <UserButton
+          appearance={{
+            elements: { avatarBox: "w-7 h-7" },
+          }}
+        />
+      </div>
+
+      {/* New Chat Button */}
+      <div className="p-3">
+        <Button
+          onClick={() => newConversationMutation.mutate()}
+          disabled={newConversationMutation.isPending || !token}
+          className="w-full justify-start gap-2 bg-primary hover:bg-primary/90"
+        >
+          <Plus className="w-4 h-4" />
+          محادثة جديدة
+        </Button>
+      </div>
+
+      {/* Search */}
+      <div className="px-3 pb-2">
+        <div className="relative">
+          <Search className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <Input
+            placeholder="بحث في المحادثات..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-9 pr-8 text-sm bg-background/50 border-0 focus-visible:ring-1"
+          />
+        </div>
+      </div>
+
+      {/* Conversations List */}
+      <div className="flex-1 overflow-y-auto px-2 pb-2">
+        {filteredConversations?.map((conv) => {
+          const isActive = pathname === `/chat/${conv.id}`;
+          return (
+            <button
+              key={conv.id}
+              onClick={() => {
+                router.push(`/chat/${conv.id}`);
+                onNavigate?.();
+              }}
+              className={cn(
+                "w-full flex items-center gap-2 p-2.5 rounded-lg text-sm transition-colors text-right group mb-0.5",
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <MessageSquare className="w-3.5 h-3.5 shrink-0" />
+              <span className="flex-1 truncate">
+                {conv.title || "محادثة جديدة"}
+              </span>
+              {conv.message_count > 0 && (
+                <span className="text-[10px] text-muted-foreground/70 shrink-0">
+                  {conv.message_count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+        {!filteredConversations?.length && token && (
+          <div className="text-center text-muted-foreground text-xs py-8">
+            لا توجد محادثات
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="p-2 border-t border-border">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+          onClick={() => {
+            router.push("/settings");
+            onNavigate?.();
+          }}
+        >
+          <Settings className="w-4 h-4" />
+          الإعدادات
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export function MobileSidebar({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  if (!isOpen) return null;
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden fixed top-4 right-4 z-50 p-2 rounded-lg bg-background border shadow-md"
-      >
-        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </button>
-
-      {isOpen && (
-        <div
-          className="md:hidden fixed inset-0 bg-black/50 z-30"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      <aside
-        className={cn(
-          "w-72 bg-card border-l flex flex-col h-full shrink-0",
-        )}
-      >
-        <div className="p-4 border-b">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Ai NorX
-            </h1>
-            <UserButton
-              appearance={{
-                elements: { avatarBox: "w-8 h-8" },
-              }}
-            />
-          </div>
-
-          <Button
-            onClick={() => newConversationMutation.mutate()}
-            disabled={newConversationMutation.isPending || !token}
-            className="w-full"
+      <div
+        className="fixed inset-0 bg-black/50 z-40 md:hidden"
+        onClick={onClose}
+      />
+      <div className="fixed inset-y-0 right-0 w-72 z-50 md:hidden">
+        <div className="relative h-full">
+          <button
+            onClick={onClose}
+            className="absolute left-2 top-2 z-10 p-1 rounded-md hover:bg-secondary"
           >
-            <Plus className="w-4 h-4 ml-2" />
-            محادثة جديدة
-          </Button>
+            <X className="w-4 h-4" />
+          </button>
+          <Sidebar onNavigate={onClose} />
         </div>
-
-        <div className="flex-1 overflow-y-auto p-2">
-          <div className="text-xs font-medium text-muted-foreground px-2 py-2">
-            المحادثات
-          </div>
-          {conversations?.map((conv) => (
-            <button
-              key={conv.id}
-              onClick={() => router.push(`/chat/${conv.id}`)}
-              className="w-full flex items-start gap-2 p-2 rounded-lg hover:bg-accent text-right"
-            >
-              <MessageSquare className="w-4 h-4 mt-0.5 text-muted-foreground shrink-0" />
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium truncate">
-                  {conv.title || "محادثة"}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {conv.message_count} رسالة
-                </div>
-              </div>
-            </button>
-          ))}
-          {!conversations?.length && token && (
-            <div className="text-center text-muted-foreground text-sm p-4">
-              لا توجد محادثات بعد
-            </div>
-          )}
-        </div>
-
-        <div className="p-2 border-t">
-          <Button
-            variant="ghost"
-            className="w-full justify-start"
-            onClick={() => router.push("/agents")}
-          >
-            <Bot className="w-4 h-4 ml-2" />
-            الوكلاء
-          </Button>
-          <Button
-            variant="ghost"
-            className="w-full justify-start"
-            onClick={() => router.push("/settings")}
-          >
-            <Settings className="w-4 h-4 ml-2" />
-            الإعدادات
-          </Button>
-        </div>
-      </aside>
+      </div>
     </>
   );
 }

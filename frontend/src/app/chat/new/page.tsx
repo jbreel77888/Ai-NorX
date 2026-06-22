@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-import { Loader2 } from "lucide-react";
-import { conversationsApi, agentsApi } from "@/lib/api";
+import { Loader2, Bot } from "lucide-react";
 
 export default function NewChatPage() {
   const router = useRouter();
@@ -20,12 +19,17 @@ export default function NewChatPage() {
         const token = (await getToken()) || "";
         if (!token || !active) return;
 
+        // Import API client
+        const { conversationsApi, agentsApi } = await import("@/lib/api");
+
+        // Get the universal NorX agent (first one)
         const agents = await agentsApi.list(token);
         if (!agents?.length) {
           if (active) setError("لا يوجد وكلاء متاحون");
           return;
         }
 
+        // Create new conversation with the universal agent
         const conversation = await conversationsApi.create(
           { agent_id: agents[0].id, title: "محادثة جديدة" },
           token
@@ -53,14 +57,17 @@ export default function NewChatPage() {
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center bg-muted/30">
+    <div className="flex-1 flex items-center justify-center">
       <div className="text-center">
         {error ? (
           <p className="text-destructive">{error}</p>
         ) : (
           <>
-            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-            <p className="text-muted-foreground">جارٍ إنشاء محادثة جديدة...</p>
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center mx-auto mb-4">
+              <Bot className="w-6 h-6 text-white" />
+            </div>
+            <Loader2 className="w-5 h-5 animate-spin mx-auto mb-3 text-primary" />
+            <p className="text-muted-foreground text-sm">جارٍ إنشاء محادثة جديدة...</p>
           </>
         )}
       </div>

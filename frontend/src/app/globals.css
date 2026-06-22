@@ -2,76 +2,75 @@
 
 @theme {
   --font-sans: "IBM Plex Sans Arabic", "Cairo", "Tajawal", system-ui, sans-serif;
-  --font-serif: "Amiri", "Noto Naskh Arabic", serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
+}
 
-  --color-primary: #2563eb;
-  --color-primary-dark: #1e40af;
-  --color-primary-light: #3b82f6;
-  --color-accent: #8b5cf6;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+:root {
+  --background: 0 0% 100%;
+  --foreground: 224 71.4% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 224 71.4% 4.1%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 224 71.4% 4.1%;
+  --primary: 262.1 83.3% 57.8%;
+  --primary-foreground: 210 20% 98%;
+  --secondary: 220 14.3% 95.9%;
+  --secondary-foreground: 220.9 39.3% 11%;
+  --muted: 220 14.3% 95.9%;
+  --muted-foreground: 220 8.9% 46.1%;
+  --accent: 220 14.3% 95.9%;
+  --accent-foreground: 220.9 39.3% 11%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 262.1 83.3% 57.8%;
+  --radius: 0.5rem;
 
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  /* LibreChat-inspired greens for chat accents */
+  --green: 142 76% 36%;
+  --green-foreground: 355.7 100% 97.3%;
+}
+
+.dark {
+  --background: 224 71.4% 4.1%;
+  --foreground: 210 20% 98%;
+  --card: 224 71.4% 4.1%;
+  --card-foreground: 210 20% 98%;
+  --popover: 224 71.4% 4.1%;
+  --popover-foreground: 210 20% 98%;
+  --primary: 263.4 70% 50.4%;
+  --primary-foreground: 210 20% 98%;
+  --secondary: 215 27.9% 16.9%;
+  --secondary-foreground: 210 20% 98%;
+  --muted: 215 27.9% 16.9%;
+  --muted-foreground: 217.9 10.6% 64.9%;
+  --accent: 215 27.9% 16.9%;
+  --accent-foreground: 210 20% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 215 27.9% 16.9%;
+  --input: 215 27.9% 16.9%;
+  --ring: 263.4 70% 50.4%;
 }
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-  }
-
   * {
     border-color: hsl(var(--border));
+  }
+
+  html {
+    height: 100%;
   }
 
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-family: var(--font-sans);
-    margin: 0;
-    padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    height: 100vh;
+    overflow: hidden;
   }
 
   [dir="rtl"] {
@@ -82,10 +81,8 @@
     text-align: left;
   }
 
-  /* Code blocks should always be LTR */
-  .code-block,
-  pre,
-  code {
+  /* Code blocks always LTR */
+  .code-block, pre, code {
     direction: ltr !important;
     text-align: left !important;
     font-family: var(--font-mono);
@@ -93,15 +90,10 @@
 }
 
 @layer utilities {
-  /* RTL utilities */
-  [dir="rtl"] .flip-x {
-    transform: scaleX(-1);
-  }
-
-  /* Custom scrollbar */
+  /* Custom scrollbar - LibreChat style */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -110,31 +102,125 @@
 
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--muted-foreground) / 0.3);
-    border-radius: 4px;
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.5);
   }
 
-  /* Loading shimmer effect */
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      hsl(var(--muted)) 0%,
-      hsl(var(--muted-foreground) / 0.1) 50%,
-      hsl(var(--muted)) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+  /* Animations */
+  .animate-in {
+    animation: fade-in 0.2s ease-out;
   }
 
-  @keyframes shimmer {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Typing indicator dots */
+  .typing-dot {
+    animation: typing 1.4s infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing {
+    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-4px); }
+  }
+
+  /* Markdown styles - LibreChat inspired */
+  .prose-chat {
+    color: hsl(var(--foreground));
+    line-height: 1.7;
+  }
+
+  .prose-chat p {
+    margin: 0.5em 0;
+  }
+
+  .prose-chat h1, .prose-chat h2, .prose-chat h3 {
+    font-weight: 600;
+    margin: 1em 0 0.5em;
+  }
+
+  .prose-chat h1 { font-size: 1.5em; }
+  .prose-chat h2 { font-size: 1.3em; }
+  .prose-chat h3 { font-size: 1.1em; }
+
+  .prose-chat ul, .prose-chat ol {
+    padding-inline-start: 1.5em;
+    margin: 0.5em 0;
+  }
+
+  .prose-chat li {
+    margin: 0.25em 0;
+  }
+
+  .prose-chat code {
+    background: hsl(var(--muted));
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: var(--font-mono);
+  }
+
+  .prose-chat pre {
+    background: hsl(220 13% 12%);
+    color: hsl(0 0% 95%);
+    padding: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 0.75em 0;
+    direction: ltr !important;
+    text-align: left !important;
+  }
+
+  .prose-chat pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .prose-chat blockquote {
+    border-inline-start: 3px solid hsl(var(--primary));
+    padding-inline-start: 1em;
+    margin: 0.75em 0;
+    color: hsl(var(--muted-foreground));
+    font-style: italic;
+  }
+
+  .prose-chat a {
+    color: hsl(var(--primary));
+    text-decoration: underline;
+  }
+
+  .prose-chat table {
+    border-collapse: collapse;
+    margin: 0.75em 0;
+    width: 100%;
+  }
+
+  .prose-chat th, .prose-chat td {
+    border: 1px solid hsl(var(--border));
+    padding: 0.5em 0.75em;
+    text-align: right;
+  }
+
+  .prose-chat th {
+    background: hsl(var(--muted));
+    font-weight: 600;
   }
 }

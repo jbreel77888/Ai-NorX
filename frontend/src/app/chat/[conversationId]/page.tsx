@@ -2,13 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Send, ArrowLeft, Loader2, User, Bot } from "lucide-react";
+import {
+  Send,
+  Loader2,
+  Bot,
+  Square,
+  ChevronDown,
+} from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { conversationsApi, agentsApi, Message } from "@/lib/api";
-import { Sidebar } from "@/components/chat/sidebar";
 import { ChatLayout } from "@/components/chat/chat-layout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,6 +23,7 @@ export default function ConversationPage() {
   const params = useParams();
   const router = useRouter();
   const { isLoaded, isSignedIn, getToken } = useAuth();
+  const { user } = useUser();
   const [token, setToken] = useState("");
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -26,6 +32,7 @@ export default function ConversationPage() {
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
 
   const conversationId = params?.conversationId as string;
@@ -79,6 +86,14 @@ export default function ConversationPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+    }
+  }, [input]);
 
   // Setup WebSocket
   useEffect(() => {
@@ -161,7 +176,8 @@ export default function ConversationPage() {
     return () => {
       ws.close();
     };
-  }, [token, conversationId, agent, queryClient]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, conversationId, agent]);
 
   const handleSend = () => {
     if (!input.trim() || isStreaming || !agent) return;
@@ -186,8 +202,7 @@ export default function ConversationPage() {
     }
   };
 
-  // Show loading state while Clerk loads
-  if (!isLoaded) {
+  if (!isLoaded || !isSignedIn) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -195,95 +210,131 @@ export default function ConversationPage() {
     );
   }
 
-  if (!isSignedIn) {
-    return null;
-  }
+  const userName = user?.firstName || user?.username || "أهلاً";
 
   return (
     <ChatLayout>
-      <Sidebar />
-      <div className="flex-1 flex flex-col h-full">
-        <header className="border-b p-4 flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/chat")}
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex-1">
-            <h2 className="font-semibold">
-              {conversation?.title || "محادثة"}
-            </h2>
-            {agent && (
-              <p className="text-xs text-muted-foreground">
-                {agent.name} · {agent.llm_model}
+      {/* Chat Header */}
+      <header className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-background/80 backdrop-blur">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center">
+            <Bot className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <div className="font-medium text-sm">NorX</div>
+            <div className="text-[11px] text-muted-foreground">
+              {agent?.llm_model || "Llama 3.1 70B"}
+            </div>
+          </div>
+        </div>
+        <Button variant="ghost" size="sm" className="text-muted-foreground gap-1">
+          <span className="text-xs">نموذج</span>
+          <ChevronDown className="w-3 h-3" />
+        </Button>
+      </header>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-3xl mx-auto px-4 py-6">
+          {messages.length === 0 && !streamingContent && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Bot className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-2xl font-semibold mb-2">
+                مرحباً، {userName} 👋
+              </h1>
+              <p className="text-muted-foreground mb-8">
+                أنا NorX، وكيلك الذكي العام. كيف يمكنني مساعدتك اليوم؟
               </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-xl mx-auto">
+                <SuggestionCard
+                  text="✍️ اكتب لي مقالاً عن الذكاء الاصطناعي"
+                  onClick={() => setInput("اكتب لي مقالاً عن الذكاء الاصطناعي")}
+                />
+                <SuggestionCard
+                  text="💻 ساعدني في كتابة كود Python"
+                  onClick={() => setInput("ساعدني في كتابة كود Python")}
+                />
+                <SuggestionCard
+                  text="📊 حلّل لي هذه البيانات"
+                  onClick={() => setInput("حلّل لي هذه البيانات")}
+                />
+                <SuggestionCard
+                  text="🌐 اترجم لي نص للإنجليزية"
+                  onClick={() => setInput("اترجم لي نص للإنجليزية")}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-6">
+            {messages.map((msg) => (
+              <MessageBubble key={msg.id} message={msg} />
+            ))}
+
+            {streamingContent && (
+              <div className="flex gap-3 animate-in">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center shrink-0">
+                  <Bot className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <div className="prose-chat max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {streamingContent}
+                    </ReactMarkdown>
+                  </div>
+                  <div className="flex gap-1 mt-2">
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full typing-dot" />
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full typing-dot" />
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full typing-dot" />
+                  </div>
+                </div>
+              </div>
             )}
           </div>
-        </header>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          {messages.length === 0 && !streamingContent && (
-            <div className="text-center py-12 text-muted-foreground">
-              <Bot className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p>ابدأ المحادثة بكتابة رسالة أدناه</p>
-            </div>
-          )}
-
-          {messages.map((msg) => (
-            <MessageBubble key={msg.id} message={msg} />
-          ))}
-
-          {streamingContent && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shrink-0">
-                <Bot className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex-1 bg-muted rounded-2xl p-4">
-                <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {streamingContent}
-                  </ReactMarkdown>
-                </div>
-                <span className="inline-block w-2 h-4 bg-primary animate-pulse mt-2" />
-              </div>
-            </div>
-          )}
 
           <div ref={messagesEndRef} />
         </div>
+      </div>
 
-        {error && (
-          <div className="px-4 py-2 bg-destructive/10 text-destructive text-sm text-center">
-            {error}
-          </div>
-        )}
+      {/* Error Banner */}
+      {error && (
+        <div className="px-4 py-2 bg-destructive/10 text-destructive text-sm text-center">
+          {error}
+        </div>
+      )}
 
-        <div className="border-t p-4">
-          <div className="flex gap-2 items-end max-w-3xl mx-auto">
+      {/* Input Area */}
+      <div className="border-t border-border bg-background p-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="relative flex items-end gap-2 bg-secondary/50 rounded-2xl border border-border focus-within:border-primary/50 p-2">
             <Textarea
+              ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="اكتب رسالتك هنا..."
+              placeholder="اكتب رسالتك إلى NorX..."
               disabled={isStreaming}
-              className="min-h-[44px] max-h-32 resize-none"
+              className="min-h-[24px] max-h-[200px] resize-none bg-transparent border-0 focus-visible:ring-0 px-2 py-1.5"
               rows={1}
             />
             <Button
               onClick={handleSend}
               disabled={!input.trim() || isStreaming}
               size="icon"
-              className="h-11 w-11 shrink-0"
+              className="h-8 w-8 shrink-0 rounded-lg"
             >
               {isStreaming ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Square className="w-3 h-3 fill-current" />
               ) : (
-                <Send className="w-4 h-4" />
+                <Send className="w-3.5 h-3.5" />
               )}
             </Button>
           </div>
+          <p className="text-[10px] text-muted-foreground/60 text-center mt-1.5">
+            قد ينتج NorX معلومات غير دقيقة. تحقق دائماً من المعلومات المهمة.
+          </p>
         </div>
       </div>
     </ChatLayout>
@@ -293,46 +344,39 @@ export default function ConversationPage() {
 function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === "user";
 
-  return (
-    <div className={cn("flex gap-3", isUser && "flex-row-reverse")}>
-      <div
-        className={cn(
-          "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
-          isUser
-            ? "bg-primary"
-            : "bg-gradient-to-br from-blue-500 to-purple-600"
-        )}
-      >
-        {isUser ? (
-          <User className="w-4 h-4 text-white" />
-        ) : (
-          <Bot className="w-4 h-4 text-white" />
-        )}
+  if (isUser) {
+    return (
+      <div className="flex justify-end animate-in">
+        <div className="max-w-[80%] bg-primary text-primary-foreground rounded-2xl rounded-bl-md px-4 py-2.5">
+          <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+        </div>
       </div>
-      <div
-        className={cn(
-          "max-w-[80%] rounded-2xl p-4",
-          isUser ? "bg-primary text-primary-foreground" : "bg-muted"
-        )}
-      >
-        {isUser ? (
-          <p className="whitespace-pre-wrap">{message.content}</p>
-        ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {message.content}
-            </ReactMarkdown>
-          </div>
-        )}
-        <div
-          className={cn(
-            "text-xs mt-2 opacity-70",
-            isUser ? "text-primary-foreground" : "text-muted-foreground"
-          )}
-        >
-          {new Date(message.created_at).toLocaleTimeString("ar-SA")}
+    );
+  }
+
+  return (
+    <div className="flex gap-3 animate-in">
+      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center shrink-0">
+        <Bot className="w-4 h-4 text-white" />
+      </div>
+      <div className="flex-1 pt-0.5">
+        <div className="prose-chat max-w-none">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {message.content}
+          </ReactMarkdown>
         </div>
       </div>
     </div>
+  );
+}
+
+function SuggestionCard({ text, onClick }: { text: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="p-3 rounded-xl border border-border bg-background hover:bg-secondary/50 hover:border-primary/30 text-right text-sm transition-colors"
+    >
+      {text}
+    </button>
   );
 }
