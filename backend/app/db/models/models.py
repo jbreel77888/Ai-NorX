@@ -61,7 +61,7 @@ class Tenant(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     subdomain: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     custom_domain: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
-    plan: Mapped[PlanType] = mapped_column(PGEnum(PlanType), default=PlanType.FREE)
+    plan: Mapped[str] = mapped_column(String(20), default='free')
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     suspended_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
 
@@ -160,9 +160,7 @@ class Agent(Base):
     allow_subagents: Mapped[bool] = mapped_column(Boolean, default=True)
 
     # Visibility
-    visibility: Mapped[AgentVisibility] = mapped_column(
-        PGEnum(AgentVisibility), default=AgentVisibility.PRIVATE
-    )
+    visibility: Mapped[str] = mapped_column(String(20), default='private')
     shared_with: Mapped[List] = mapped_column(JSONB, default=list)
 
     # Versioning
@@ -252,7 +250,7 @@ class Message(Base):
     )
     parent_message_id: Mapped[Optional[UUID]] = mapped_column(PGUUID)
 
-    role: Mapped[MessageRole] = mapped_column(PGEnum(MessageRole), nullable=False)
+    role: Mapped[str] = mapped_column(String(20), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     reasoning: Mapped[Optional[str]] = mapped_column(Text)
 

@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.db.models import Tenant, User, PlanType
+from app.db.models import Tenant, User
 
 logger = logging.getLogger(__name__)
 
@@ -165,7 +165,7 @@ async def get_or_create_user_from_clerk(
     tenant = Tenant(
         name=f"{name or email}'s Workspace",
         subdomain=subdomain,
-        plan=PlanType.FREE,
+        plan='free',
         is_active=True,
         clerk_org_id=clerk_user.get("organization_id"),
     )
