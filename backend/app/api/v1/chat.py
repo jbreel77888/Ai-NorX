@@ -62,9 +62,9 @@ async def chat_websocket(websocket: WebSocket):
             await websocket.close()
             return
 
-        # Get or create user
+        # Get or create user - clerk_data is the JWT claims
         async with async_session_factory() as db:
-            result = await get_or_create_user_from_clerk(db, clerk_data.get("user", clerk_data))
+            result = await get_or_create_user_from_clerk(db, clerk_data)
             if not result:
                 await websocket.send_json({"type": "error", "content": "Auth failed"})
                 await websocket.close()
