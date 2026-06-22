@@ -90,12 +90,19 @@ export const apiClient = new ApiClient();
 // ━━━━━ API Functions ━━━━━
 
 export async function getApiToken(): Promise<string> {
+  // This function should only be called from client components
+  // Use the useAuth() hook from @clerk/nextjs in components instead
   if (typeof window === "undefined") {
-    throw new Error("getApiToken can only be called client-side");
+    return "";
   }
-  const { Clerk } = await import("@clerk/clerk-js");
-  // Use the useAuth hook in components instead
-  return "";
+  try {
+    const { Clerk } = await import("@clerk/clerk-js");
+    const clerk = await Clerk.load();
+    const token = await clerk.session?.getToken();
+    return token || "";
+  } catch {
+    return "";
+  }
 }
 
 // ━━━ Types ━━━
