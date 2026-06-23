@@ -151,17 +151,18 @@ async def process_document(
 
     # 3. Store chunks in DB
     if db_session:
-        for i, (chunk_text, embedding) in enumerate(zip(chunks, embeddings)):
+        for i, chunk_text_str in enumerate(chunks):
+            embedding = embeddings[i] if i < len(embeddings) else [0.0] * 1024
             chunk = DocumentChunk(
                 tenant_id=tenant_id,
                 document_id=document_id,
                 knowledge_base_id=knowledge_base_id,
                 chunk_index=i,
-                text=chunk_text,
+                text=chunk_text_str,
                 embedding=embedding,
                 chunk_metadata={
-                    "char_count": len(chunk_text),
-                    "hash": compute_hash(chunk_text),
+                    "char_count": len(chunk_text_str),
+                    "hash": compute_hash(chunk_text_str),
                 },
             )
             db_session.add(chunk)
