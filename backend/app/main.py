@@ -63,6 +63,14 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"❌ Database init failed: {e}")
 
+    # Initialize tools
+    try:
+        from app.agents.tools import init_default_tools
+        tools = init_default_tools()
+        logger.info(f"✅ Tools initialized: {len(tools.list_all())} tools")
+    except Exception as e:
+        logger.error(f"❌ Tools init failed: {e}")
+
     yield
 
     logger.info(f"👋 Shutting down {settings.PROJECT_NAME} API...")

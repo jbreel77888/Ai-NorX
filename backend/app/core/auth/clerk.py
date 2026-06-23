@@ -236,7 +236,7 @@ async def _create_default_agent(db: AsyncSession, tenant_id: UUID, user_id: UUID
 أنت جزء من منصة "Ai NorX" - منصة الوكلاء الأذكياء العربية الأولى.""",
         temperature=0.7,
         max_tokens=4096,
-        tools=["web_search"],
+        tools=["web_search", "web_fetch"],
         conversation_starters=[
             "مرحباً! كيف يمكنني مساعدتك اليوم؟",
             "اكتب لي مقالاً عن الذكاء الاصطناعي",
