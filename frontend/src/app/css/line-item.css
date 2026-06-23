@@ -16,12 +16,12 @@
   }
 
   &[data-selected="true"] {
-    @apply bg-action-link-01;
+    @apply bg-accent-weak;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-action-link-01;
+    @apply bg-accent-weak;
   }
 }
 
@@ -65,12 +65,12 @@
   }
 
   &[data-selected="true"] {
-    @apply bg-status-error-01;
+    @apply bg-destructive;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-status-error-01;
+    @apply bg-destructive;
   }
 }
 
@@ -210,7 +210,7 @@
   @apply stroke-text-03;
 
   .group\/LineItem[data-selected="true"] & {
-    @apply stroke-action-link-05;
+    @apply stroke-accent-weak;
   }
 }
 
@@ -223,7 +223,7 @@
 }
 
 .line-item-icon-danger {
-  @apply stroke-status-error-05;
+  @apply stroke-destructive;
 }
 
 .line-item-icon-action {
