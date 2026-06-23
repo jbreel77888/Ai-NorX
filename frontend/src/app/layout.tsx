@@ -22,17 +22,17 @@ export default function RootLayout({
     <ClerkProvider
       appearance={{
         variables: {
-          colorPrimary: "#2563eb",
-          colorText: "#0f172a",
+          colorPrimary: "#5b21b6",
+          colorText: "#1a1a1a",
           colorBackground: "#ffffff",
           colorInputBackground: "#ffffff",
-          colorInputText: "#0f172a",
-          fontFamily: "'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif",
+          colorInputText: "#1a1a1a",
+          fontFamily: "'IBM Plex Sans Arabic', 'Inter', system-ui, sans-serif",
         },
         elements: {
           formButtonPrimary:
-            "bg-blue-600 hover:bg-blue-700 text-sm normal-case",
-          card: "shadow-xl rounded-2xl border-0",
+            "bg-[#5b21b6] hover:bg-[#5b21b6]/90 text-sm normal-case",
+          card: "shadow-none border border-[var(--border-01)] rounded-xl",
         },
       }}
       signInUrl="/sign-in"
@@ -43,7 +43,7 @@ export default function RootLayout({
       <html lang="ar" dir="rtl" suppressHydrationWarning>
         <head>
           <link
-            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cairo:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
             rel="stylesheet"
           />
         </head>

@@ -1,0 +1,189 @@
+/**
+ * Onyx Design Tokens - Generated from shared/tokens/*.json
+ * This is the compiled output that @onyx-ai/shared would produce.
+ * All values are copied verbatim from Onyx's primitives + semantic tokens.
+ */
+
+:root {
+  /* ━━━ Primitives: Grayscale (from primitives.json) ━━━ */
+  --grey-100: #000000;
+  --grey-98: #050505;
+  --grey-96: #0a0a0a;
+  --grey-94: #0f0f0f;
+  --grey-92: #141414;
+  --grey-90: #1a1a1a;
+  --grey-85: #262626;
+  --grey-80: #333333;
+  --grey-75: #404040;
+  --grey-70: #4d4d4d;
+  --grey-60: #555555;
+  --grey-50: #808080;
+  --grey-40: #a4a4a4;
+  --grey-30: #b2b2b2;
+  --grey-20: #cccccc;
+  --grey-10: #e6e6e6;
+  --grey-08: #ebebeb;
+  --grey-06: #f0f0f0;
+  --grey-04: #f5f5f5;
+  --grey-02: #fafafa;
+  --grey-00: #ffffff;
+
+  /* Alpha greys (computed) */
+  --alpha-grey-100-90: rgba(0, 0, 0, 0.90);
+  --alpha-grey-100-75: rgba(0, 0, 0, 0.75);
+  --alpha-grey-100-55: rgba(0, 0, 0, 0.55);
+  --alpha-grey-100-45: rgba(0, 0, 0, 0.45);
+  --alpha-grey-100-20: rgba(0, 0, 0, 0.20);
+  --alpha-grey-00-95: rgba(255, 255, 255, 0.95);
+  --alpha-grey-00-85: rgba(255, 255, 255, 0.85);
+  --alpha-grey-00-60: rgba(255, 255, 255, 0.60);
+  --alpha-grey-00-45: rgba(255, 255, 255, 0.45);
+  --alpha-grey-00-20: rgba(255, 255, 255, 0.20);
+
+  /* ━━━ Semantic: Light Mode (from semantic-light.json) ━━━ */
+  --text-01: var(--alpha-grey-100-20);
+  --text-02: var(--alpha-grey-100-45);
+  --text-03: var(--alpha-grey-100-55);
+  --text-04: var(--alpha-grey-100-75);
+  --text-05: var(--alpha-grey-100-90);
+
+  --text-inverted-01: var(--alpha-grey-00-20);
+  --text-inverted-02: var(--alpha-grey-00-45);
+  --text-inverted-03: var(--alpha-grey-00-60);
+  --text-inverted-04: var(--alpha-grey-00-85);
+  --text-inverted-05: var(--alpha-grey-00-95);
+
+  --text-light-03: var(--alpha-grey-00-60);
+  --text-light-05: var(--grey-00);
+  --text-dark-03: var(--alpha-grey-100-55);
+  --text-dark-05: var(--grey-100);
+
+  --background-strong: var(--grey-00);
+  --background-weak: var(--grey-04);
+  --background-weaker: var(--grey-06);
+  --background-weakest: var(--grey-02);
+  --background-overlay: rgba(0, 0, 0, 0.40);
+
+  --border-01: var(--grey-10);
+  --border-02: var(--grey-08);
+  --border-03: var(--grey-06);
+
+  /* Status colors */
+  --status-success-01: #15803d;
+  --status-success-02: #22c55e;
+  --status-success-05: #f0fdf4;
+  --status-error-01: #b91c1c;
+  --status-error-02: #ef4444;
+  --status-error-05: #fef2f2;
+  --status-warning-01: #b45309;
+  --status-warning-02: #f59e0b;
+  --status-warning-05: #fffbeb;
+  --status-info-01: #1d4ed8;
+  --status-info-02: #3b82f6;
+  --status-info-05: #eff6ff;
+
+  /* Brand accent */
+  --accent-strong: #5b21b6;
+  --accent-weak: #8b5cf6;
+  --accent-weaker: #c4b5fd;
+  --accent-weakest: #ede9fe;
+
+  /* Shadows */
+  --shadow-01: rgba(0, 0, 0, 0.04);
+  --shadow-02: rgba(0, 0, 0, 0.08);
+  --shadow-03: rgba(0, 0, 0, 0.12);
+
+  /* Frosted overlay */
+  --frost-overlay: rgba(255, 255, 255, 0.6);
+
+  /* Shimmer */
+  --shimmer-base: #a3a3a3;
+  --shimmer-highlight: #000000;
+
+  /* ━━━ Sizes (from size.json) ━━━ */
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-24: 24px;
+  --radius-full: 9999px;
+
+  /* Sidebar */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 56px;
+  --app-page-main-content-width: 768px;
+
+  /* Z-index */
+  --z-index-base: 0;
+  --z-index-sticky: 100;
+  --z-index-header: 200;
+  --z-index-dropdown: 1000;
+  --z-index-modal: 2000;
+  --z-index-toast: 3000;
+
+  /* ━━━ Typography (from typography.json + typography-presets.json) ━━━ */
+  --font-sans: "IBM Plex Sans Arabic", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
+
+  /* Typography presets */
+  --font-heading-h1: 600 24px/32px var(--font-sans);
+  --font-heading-h2: 600 20px/28px var(--font-sans);
+  --font-heading-h3: 600 16px/24px var(--font-sans);
+  --font-heading-h3-muted: 400 16px/24px var(--font-sans);
+  --font-main-content-body: 400 15px/24px var(--font-sans);
+  --font-main-content-muted: 400 15px/24px var(--font-sans);
+  --font-main-content-emphasis: 500 15px/24px var(--font-sans);
+  --font-main-content-mono: 400 14px/20px var(--font-mono);
+  --font-main-ui-body: 400 14px/20px var(--font-sans);
+  --font-main-ui-muted: 400 14px/20px var(--font-sans);
+  --font-main-ui-action: 500 14px/20px var(--font-sans);
+  --font-main-ui-mono: 400 13px/18px var(--font-mono);
+  --font-secondary-body: 400 13px/18px var(--font-sans);
+  --font-secondary-action: 500 13px/18px var(--font-sans);
+  --font-secondary-mono: 400 12px/16px var(--font-mono);
+  --font-secondary-mono-label: 500 12px/16px var(--font-mono);
+  --font-figure-small-label: 500 11px/16px var(--font-sans);
+  --font-figure-small-value: 400 11px/16px var(--font-mono);
+  --font-figure-keystroke: 400 11px/16px var(--font-mono);
+}
+
+/* ━━━ Dark Mode (from semantic-dark.json) ━━━ */
+.dark {
+  --text-01: var(--alpha-grey-00-20);
+  --text-02: var(--alpha-grey-00-45);
+  --text-03: var(--alpha-grey-00-60);
+  --text-04: var(--alpha-grey-00-85);
+  --text-05: var(--alpha-grey-00-95);
+
+  --text-inverted-01: var(--alpha-grey-100-20);
+  --text-inverted-02: var(--alpha-grey-100-45);
+  --text-inverted-03: var(--alpha-grey-100-55);
+  --text-inverted-04: var(--alpha-grey-100-75);
+  --text-inverted-05: var(--alpha-grey-100-90);
+
+  --text-light-03: var(--alpha-grey-00-60);
+  --text-light-05: var(--grey-00);
+  --text-dark-03: var(--alpha-grey-100-55);
+  --text-dark-05: var(--grey-100);
+
+  --background-strong: var(--grey-90);
+  --background-weak: var(--grey-85);
+  --background-weaker: var(--grey-80);
+  --background-weakest: var(--grey-92);
+  --background-overlay: rgba(0, 0, 0, 0.60);
+
+  --border-01: var(--grey-70);
+  --border-02: var(--grey-75);
+  --border-03: var(--grey-80);
+
+  --shadow-01: rgba(0, 0, 0, 0.20);
+  --shadow-02: rgba(0, 0, 0, 0.40);
+  --shadow-03: rgba(0, 0, 0, 0.60);
+
+  --frost-overlay: rgba(26, 26, 26, 0.6);
+
+  --shimmer-base: #525252;
+  --shimmer-highlight: #ffffff;
+}
