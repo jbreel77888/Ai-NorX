@@ -54,8 +54,10 @@ RUN pip install --upgrade pip && \
     pypdf>=5.1.0 \
     python-docx>=1.1.2 \
     openpyxl>=3.1.5 \
+    python-pptx>=1.0.0 \
     markdown>=3.7 \
     beautifulsoup4>=4.12.3 \
+    lxml>=5.0.0 \
     trafilatura>=2.0.0 \
     boto3>=1.35.0 \
     aioboto3>=13.3.0 \

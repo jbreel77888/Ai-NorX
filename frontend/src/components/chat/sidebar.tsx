@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth, useUser, UserButton } from "@clerk/nextjs";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, MessageSquare, Settings, Search, X } from "lucide-react";
+import { Plus, MessageSquare, Settings, Search, X, FolderOpen } from "lucide-react";
 import { conversationsApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -131,7 +131,19 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       </div>
 
       {/* Footer */}
-      <div className="p-2 border-t border-border">
+      <div className="p-2 border-t border-border space-y-0.5">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+          onClick={() => {
+            router.push("/files");
+            onNavigate?.();
+          }}
+        >
+          <FolderOpen className="w-4 h-4" />
+          ملفاتي
+        </Button>
         <Button
           variant="ghost"
           size="sm"
