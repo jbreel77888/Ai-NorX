@@ -1,13 +1,13 @@
 @import "./styles/onyx-tokens.css";
-@import "./css/button.css" layer(base);
-@import "./css/card.css" layer(base);
-@import "./css/divider.css" layer(base);
-@import "./css/general-layouts.css" layer(base);
-@import "./css/inputs.css" layer(base);
-@import "./css/line-item.css" layer(base);
-@import "./css/square-button.css" layer(base);
-@import "./css/z-index.css" layer(base);
 @import "tailwindcss";
+
+/* Onyx CSS files disabled temporarily - they use @apply with non-standard classes
+   that don't work with Tailwind v4. We use the design tokens directly instead.
+   To re-enable: fix all @apply directives to use standard Tailwind classes.
+   @import "./css/button.css" layer(base);
+   @import "./css/card.css" layer(base);
+   ...
+*/
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    Tailwind v4 Theme - Onyx Design Tokens
@@ -17,32 +17,53 @@
   --font-sans: "IBM Plex Sans Arabic", "Inter", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
 
-  /* Onyx color tokens */
+  /* Onyx grayscale */
+  --color-grey-00: #ffffff;
+  --color-grey-02: #fafafa;
+  --color-grey-04: #f5f5f5;
+  --color-grey-06: #f0f0f0;
+  --color-grey-08: #ebebeb;
+  --color-grey-10: #e6e6e6;
+  --color-grey-20: #cccccc;
+  --color-grey-30: #b2b2b2;
+  --color-grey-40: #a4a4a4;
+  --color-grey-50: #808080;
+  --color-grey-60: #555555;
+  --color-grey-70: #4d4d4d;
+  --color-grey-80: #333333;
+  --color-grey-90: #1a1a1a;
+  --color-grey-100: #000000;
+
+  /* Semantic backgrounds */
   --color-background-strong: var(--background-strong);
   --color-background-weak: var(--background-weak);
   --color-background-weaker: var(--background-weaker);
   --color-background-weakest: var(--background-weakest);
 
+  /* Semantic text */
   --color-text-01: var(--text-01);
   --color-text-02: var(--text-02);
   --color-text-03: var(--text-03);
   --color-text-04: var(--text-04);
   --color-text-05: var(--text-05);
 
+  /* Borders */
   --color-border-01: var(--border-01);
   --color-border-02: var(--border-02);
   --color-border-03: var(--border-03);
 
+  /* Accent */
   --color-accent-strong: var(--accent-strong);
   --color-accent-weak: var(--accent-weak);
   --color-accent-weaker: var(--accent-weaker);
 
+  /* Status */
   --color-status-success: var(--status-success-02);
   --color-status-error: var(--status-error-02);
   --color-status-warning: var(--status-warning-02);
   --color-status-info: var(--status-info-02);
 
-  /* Onyx radius */
+  /* Radius (Onyx) */
   --radius-sm: var(--radius-4);
   --radius-md: var(--radius-8);
   --radius-lg: var(--radius-12);
@@ -250,10 +271,7 @@
   }
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Custom Scrollbar (Onyx style)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
+/* Custom Scrollbar (Onyx style) */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
