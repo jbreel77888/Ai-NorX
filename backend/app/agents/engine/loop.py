@@ -98,7 +98,8 @@ class AgentLoop:
 
             # Stream LLM response
             iteration_text = ""
-            iteration_tool_calls = []
+            # Dict to accumulate tool_call deltas by index
+            tool_call_accumulator: dict[int, dict] = {}
             finish_reason = None
 
             try:
@@ -119,7 +120,28 @@ class AgentLoop:
                         }
 
                     elif chunk.type == "tool_call":
-                        iteration_tool_calls.append(chunk.tool_call)
+                        # Accumulate tool_call deltas by index
+                        tc = chunk.tool_call or {}
+                        idx = tc.get("index", 0)
+                        if idx not in tool_call_accumulator:
+                            tool_call_accumulator[idx] = {
+                                "id": tc.get("id", ""),
+                                "type": "function",
+                                "function": {
+                                    "name": "",
+                                    "arguments": "",
+                                },
+                            }
+                        existing = tool_call_accumulator[idx]
+                        if tc.get("id"):
+                            existing["id"] = tc["id"]
+                        if tc.get("type"):
+                            existing["type"] = tc["type"]
+                        fn = tc.get("function", {})
+                        if fn.get("name"):
+                            existing["function"]["name"] += fn["name"]
+                        if fn.get("arguments"):
+                            existing["function"]["arguments"] += fn["arguments"]
 
                     elif chunk.type == "usage":
                         total_input_tokens += chunk.input_tokens
@@ -137,6 +159,9 @@ class AgentLoop:
                 logger.error(f"LLM streaming error: {e}", exc_info=True)
                 yield {"type": "error", "content": f"خطأ في الاتصال بالـ LLM: {e}"}
                 return
+
+            # Convert accumulated tool calls to list (sorted by index)
+            iteration_tool_calls = [tool_call_accumulator[i] for i in sorted(tool_call_accumulator)]
 
             # If no tool calls, we're done
             if not iteration_tool_calls:
