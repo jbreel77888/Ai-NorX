@@ -3,7 +3,7 @@
 }
 
 .card[data-variant="primary"] {
-  @apply bg-muted border;
+  @apply bg-secondary border;
 }
 
 .card[data-variant="secondary"] {
@@ -15,9 +15,9 @@
 }
 
 .card[data-variant="disabled"] {
-  @apply cursor-not-allowed bg-muted border opacity-50;
+  @apply cursor-not-allowed bg-secondary border opacity-50;
 }
 
 .card[data-variant="borderless"] {
-  @apply bg-muted;
+  @apply bg-secondary;
 }

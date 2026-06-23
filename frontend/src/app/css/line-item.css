@@ -1,7 +1,7 @@
 /* LineItem Button Variants */
 /* Hover styles are disabled when keyboard navigation is active (data-keyboard-nav on parent) */
 .line-item-button-main {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -9,24 +9,24 @@
 }
 
 .line-item-button-main-emphasized {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
   }
 
   &[data-selected="true"] {
-    @apply bg-accent-weak;
+    @apply bg-purple-600;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-accent-weak;
+    @apply bg-purple-600;
   }
 }
 
 .line-item-button-strikethrough {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -34,7 +34,7 @@
 }
 
 .line-item-button-strikethrough-emphasized {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -50,7 +50,7 @@
 }
 
 .line-item-button-danger {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -58,25 +58,25 @@
 }
 
 .line-item-button-danger-emphasized {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
   }
 
   &[data-selected="true"] {
-    @apply bg-destructive;
+    @apply bg-red-500;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-destructive;
+    @apply bg-red-500;
   }
 }
 
 /* Action Variant - same background behavior as main */
 .line-item-button-action {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -84,25 +84,25 @@
 }
 
 .line-item-button-action-emphasized {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
   }
 
   &[data-selected="true"] {
-    @apply bg-muted;
+    @apply bg-secondary;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-muted;
+    @apply bg-secondary;
   }
 }
 
 /* Muted Variant - subdued styling for less prominent items */
 .line-item-button-muted {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -110,25 +110,25 @@
 }
 
 .line-item-button-muted-emphasized {
-  @apply bg-transparent hover:bg-muted;
+  @apply bg-transparent hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
   }
 
   &[data-selected="true"] {
-    @apply bg-muted;
+    @apply bg-secondary;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-muted;
+    @apply bg-secondary;
   }
 }
 
 /* Skeleton Variant - dashed border placeholder style */
 .line-item-button-skeleton {
-  @apply bg-transparent border border-dashed border-border-01 hover:bg-muted;
+  @apply bg-transparent border border-dashed border-border-01 hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -136,19 +136,19 @@
 }
 
 .line-item-button-skeleton-emphasized {
-  @apply bg-transparent border border-dashed border-border-01 hover:bg-muted;
+  @apply bg-transparent border border-dashed border-border-01 hover:bg-secondary;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
   }
 
   &[data-selected="true"] {
-    @apply bg-muted;
+    @apply bg-secondary;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-muted;
+    @apply bg-secondary;
   }
 }
 
@@ -174,7 +174,7 @@
   color: var(--status-error-05) !important;
 }
 
-.line-item-text-accent-weak {
+.line-item-text-purple-600 {
   font-family: var(--font-hanken-grotesk);
   font-size: 14px;
   font-weight: 600;
