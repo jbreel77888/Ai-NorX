@@ -19,17 +19,17 @@
 }
 
 .button-main-primary-text {
-  color: var(--text-inverted-05) !important;
+  color: var(--text-foreground) !important;
 }
 .button-main-primary:disabled .button-main-primary-text {
-  color: var(--text-inverted-04) !important;
+  color: var(--text-foreground) !important;
 }
 
 .button-main-primary-icon {
-  stroke: var(--text-inverted-05);
+  stroke: var(--text-foreground);
 }
 .button-main-primary:disabled .button-main-primary-icon {
-  stroke: var(--text-inverted-04);
+  stroke: var(--text-foreground);
 }
 
 /* ============================================================================
@@ -211,14 +211,14 @@
 }
 
 .button-action-primary-text {
-  color: var(--text-light-05) !important;
+  color: var(--text-foreground) !important;
 }
 .button-action-primary:disabled .button-action-primary-text {
   color: var(--text-01) !important;
 }
 
 .button-action-primary-icon {
-  stroke: var(--text-light-05);
+  stroke: var(--text-foreground);
 }
 .button-action-primary:disabled .button-action-primary-icon {
   stroke: var(--text-01);
@@ -315,14 +315,14 @@
 }
 
 .button-danger-primary-text {
-  color: var(--text-light-05) !important;
+  color: var(--text-foreground) !important;
 }
 .button-danger-primary:disabled .button-danger-primary-text {
   color: var(--text-01) !important;
 }
 
 .button-danger-primary-icon {
-  stroke: var(--text-light-05);
+  stroke: var(--text-foreground);
 }
 .button-danger-primary:disabled .button-danger-primary-icon {
   stroke: var(--text-01);
@@ -351,14 +351,14 @@
 }
 
 .button-danger-secondary-text {
-  color: var(--action-text-danger-05) !important;
+  color: var(--action-text-destructive) !important;
 }
 .button-danger-secondary:disabled .button-danger-secondary-text {
   color: var(--action-danger-03) !important;
 }
 
 .button-danger-secondary-icon {
-  stroke: var(--action-text-danger-05);
+  stroke: var(--action-text-destructive);
 }
 .button-danger-secondary:disabled .button-danger-secondary-icon {
   stroke: var(--action-danger-03);
@@ -385,14 +385,14 @@
 }
 
 .button-danger-tertiary-text {
-  color: var(--action-text-danger-05) !important;
+  color: var(--action-text-destructive) !important;
 }
 .button-danger-tertiary:disabled .button-danger-tertiary-text {
   color: var(--action-danger-03) !important;
 }
 
 .button-danger-tertiary-icon {
-  stroke: var(--action-text-danger-05);
+  stroke: var(--action-text-destructive);
 }
 .button-danger-tertiary:disabled .button-danger-tertiary-icon {
   stroke: var(--action-danger-03);

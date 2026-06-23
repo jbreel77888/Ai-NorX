@@ -1,7 +1,7 @@
 /* LineItem Button Variants */
 /* Hover styles are disabled when keyboard navigation is active (data-keyboard-nav on parent) */
 .line-item-button-main {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -9,7 +9,7 @@
 }
 
 .line-item-button-main-emphasized {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -26,7 +26,7 @@
 }
 
 .line-item-button-strikethrough {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -34,7 +34,7 @@
 }
 
 .line-item-button-strikethrough-emphasized {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -50,7 +50,7 @@
 }
 
 .line-item-button-danger {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -58,7 +58,7 @@
 }
 
 .line-item-button-danger-emphasized {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -76,7 +76,7 @@
 
 /* Action Variant - same background behavior as main */
 .line-item-button-action {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -84,25 +84,25 @@
 }
 
 .line-item-button-action-emphasized {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
   }
 
   &[data-selected="true"] {
-    @apply bg-background-tint-02;
+    @apply bg-muted;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-background-tint-02;
+    @apply bg-muted;
   }
 }
 
 /* Muted Variant - subdued styling for less prominent items */
 .line-item-button-muted {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -110,25 +110,25 @@
 }
 
 .line-item-button-muted-emphasized {
-  @apply bg-transparent hover:bg-background-tint-02;
+  @apply bg-transparent hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
   }
 
   &[data-selected="true"] {
-    @apply bg-background-tint-02;
+    @apply bg-muted;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-background-tint-02;
+    @apply bg-muted;
   }
 }
 
 /* Skeleton Variant - dashed border placeholder style */
 .line-item-button-skeleton {
-  @apply bg-transparent border border-dashed border-border-01 hover:bg-background-tint-01;
+  @apply bg-transparent border border-dashed border-border-01 hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
@@ -136,19 +136,19 @@
 }
 
 .line-item-button-skeleton-emphasized {
-  @apply bg-transparent border border-dashed border-border-01 hover:bg-background-tint-02;
+  @apply bg-transparent border border-dashed border-border-01 hover:bg-muted;
 
   [data-keyboard-nav="true"] &:hover {
     @apply bg-transparent;
   }
 
   &[data-selected="true"] {
-    @apply bg-background-tint-02;
+    @apply bg-muted;
   }
 
   /* Ensure selected wins over keyboard-nav hover override */
   [data-keyboard-nav="true"] &[data-selected="true"] {
-    @apply bg-background-tint-02;
+    @apply bg-muted;
   }
 }
 
@@ -161,7 +161,7 @@
   }
 }
 
-.line-item-text-disabled {
+.line-item-text-muted-foreground {
   color: var(--text-01) !important;
 }
 
@@ -170,11 +170,11 @@
   @apply line-through! decoration-2!;
 }
 
-.line-item-text-danger {
+.line-item-text-destructive {
   color: var(--status-error-05) !important;
 }
 
-.line-item-text-action {
+.line-item-text-accent-weak {
   font-family: var(--font-hanken-grotesk);
   font-size: 14px;
   font-weight: 600;
@@ -207,37 +207,37 @@
 
 /* LineItem Icon Variants */
 .line-item-icon-main {
-  @apply stroke-text-03;
+  @apply stroke-current;
 
   .group\/LineItem[data-selected="true"] & {
-    @apply stroke-accent-weak;
+    @apply stroke-accent-strong;
   }
 }
 
 .line-item-icon-strikethrough {
-  @apply stroke-text-03;
+  @apply stroke-current;
 }
 
 .line-item-icon-disabled {
-  @apply stroke-text-01;
+  @apply stroke-current;
 }
 
 .line-item-icon-danger {
-  @apply stroke-destructive;
+  @apply stroke-red-500;
 }
 
 .line-item-icon-action {
-  @apply stroke-text-03;
+  @apply stroke-current;
 }
 
 .line-item-icon-muted {
-  @apply stroke-text-02;
+  @apply stroke-current;
 
   .group\/LineItem[data-selected="true"] & {
-    @apply stroke-text-02;
+    @apply stroke-current;
   }
 }
 
 .line-item-icon-skeleton {
-  @apply stroke-text-02;
+  @apply stroke-current;
 }

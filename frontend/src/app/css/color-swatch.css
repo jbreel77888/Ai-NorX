@@ -17,9 +17,9 @@
 .color-swatch__text {
   font-size: 0.5rem;
   font-weight: 500;
-  color: var(--text-dark-05);
+  color: var(--text-foreground);
 }
 
 .color-swatch[data-state="dark"] .color-swatch__text {
-  color: var(--text-light-05);
+  color: var(--text-foreground);
 }
