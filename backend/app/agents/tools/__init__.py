@@ -12,6 +12,7 @@ from .base import (
 from .registry import ToolRegistry, get_registry, registry
 from .web_search import WebSearchTool, WebFetchTool
 from .knowledge_search import KnowledgeSearchTool
+from .spawn import SpawnTool
 
 # Initialize default tools
 def init_default_tools():
@@ -19,6 +20,7 @@ def init_default_tools():
     registry.register(WebSearchTool())
     registry.register(WebFetchTool())
     registry.register(KnowledgeSearchTool())
+    registry.register(SpawnTool())
     return registry
 
 __all__ = [
@@ -34,5 +36,6 @@ __all__ = [
     "WebSearchTool",
     "WebFetchTool",
     "KnowledgeSearchTool",
+    "SpawnTool",
     "init_default_tools",
 ]

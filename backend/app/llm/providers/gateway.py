@@ -272,6 +272,56 @@ class LLMGateway:
             logger.error(f"Embedding error: {e}")
             raise
 
+    async def chat_complete(
+        self,
+        messages: List[LLMMessage],
+        model: str,
+        provider: str = "nvidia",
+        temperature: float = 0.7,
+        max_tokens: int = 1000,
+    ) -> str:
+        """Non-streaming chat completion (for memory consolidation, dreams, etc)."""
+        if provider == "nvidia":
+            base_url = settings.NVIDIA_BASE_URL
+            api_key = settings.NVIDIA_API_KEY
+        elif provider == "opencode":
+            base_url = settings.OPENCODE_BASE_URL
+            api_key = settings.OPENCODE_API_KEY
+        else:
+            raise ValueError(f"Unknown provider: {provider}")
+
+        api_messages = [m.to_api_dict() for m in messages]
+
+        payload = {
+            "model": model,
+            "messages": api_messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stream": False,
+        }
+
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.post(
+                    f"{base_url}/chat/completions",
+                    json=payload,
+                    headers=headers,
+                )
+                response.raise_for_status()
+                data = response.json()
+                choices = data.get("choices", [])
+                if choices:
+                    return choices[0].get("message", {}).get("content", "")
+                return ""
+        except Exception as e:
+            logger.error(f"chat_complete error: {e}")
+            raise
+
     def _estimate_cost_nvidia(self, input_tokens: int, output_tokens: int, model: str) -> float:
         """Estimate cost (NVIDIA free tier = $0)."""
         return 0.0

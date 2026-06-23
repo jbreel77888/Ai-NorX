@@ -20,6 +20,7 @@ from app.agents.tools import (
     ToolCall,
     ToolResult,
 )
+from app.agents.memory import MemoryStore
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,10 @@ class AgentLoop:
         user_message: str,
         attachments: Optional[List[dict]] = None,
     ) -> AsyncIterator[dict]:
-        """Run the agent loop with tool calling."""
+        """Run the agent loop with tool calling + memory."""
+        # Initialize memory store
+        memory = MemoryStore(self.db)
+
         # 1. Save user message
         user_msg = Message(
             tenant_id=conversation.tenant_id,
@@ -59,6 +63,16 @@ class AgentLoop:
         await self.db.flush()
         await self.db.refresh(user_msg)
 
+        # Save to short-term memory
+        await memory.add_entry(
+            tenant_id=conversation.tenant_id,
+            user_id=conversation.user_id,
+            agent_id=self.agent.id,
+            content=f"المستخدم: {user_message}",
+            session_id=conversation.id,
+            entry_type="user_message",
+        )
+
         yield {
             "type": "user_message_saved",
             "message_id": str(user_msg.id),
@@ -67,14 +81,22 @@ class AgentLoop:
         # 2. Load conversation history
         history = await self._load_history(conversation.id)
 
-        # 3. Build initial LLM messages
-        llm_messages = self._build_llm_messages(history, user_message)
+        # 3. Get memory context (long-term + recent)
+        memory_context = await memory.get_context_for_agent(
+            tenant_id=conversation.tenant_id,
+            user_id=conversation.user_id,
+            agent_id=self.agent.id,
+            query=user_message,
+        )
 
-        # 4. Get available tools (from agent config + default)
+        # 4. Build LLM messages with memory context
+        llm_messages = self._build_llm_messages(history, user_message, memory_context)
+
+        # 5. Get available tools (from agent config + default)
         tool_names = self.agent.tools or ["web_search"]
         tool_schemas = self.registry.get_openai_schemas(tool_names)
 
-        # 5. Build tool context
+        # 6. Build tool context
         tool_context = ToolContext(
             tenant_id=conversation.tenant_id,
             user_id=conversation.user_id,
@@ -275,6 +297,16 @@ class AgentLoop:
         )
         self.db.add(assistant_msg)
 
+        # Save assistant response to memory
+        await memory.add_entry(
+            tenant_id=conversation.tenant_id,
+            user_id=conversation.user_id,
+            agent_id=self.agent.id,
+            content=f"NorX: {full_response[:500]}",  # truncate for memory
+            session_id=conversation.id,
+            entry_type="assistant_message",
+        )
+
         # 8. Update conversation stats
         conversation.message_count += 2
         conversation.total_tokens += total_input_tokens + total_output_tokens
@@ -287,6 +319,28 @@ class AgentLoop:
 
         await self.db.flush()
         await self.db.refresh(assistant_msg)
+
+        # 9. Trigger memory consolidation + dream (async, non-blocking)
+        try:
+            consolidated = await memory.maybe_consolidate(
+                tenant_id=conversation.tenant_id,
+                user_id=conversation.user_id,
+                agent_id=self.agent.id,
+            )
+            if consolidated:
+                yield {"type": "memory_event", "event": "consolidated"}
+
+            dreamed = await memory.maybe_dream(
+                tenant_id=conversation.tenant_id,
+                user_id=conversation.user_id,
+                agent_id=self.agent.id,
+            )
+            if dreamed:
+                yield {"type": "memory_event", "event": "dreamed"}
+        except Exception as e:
+            logger.warning(f"Memory processing failed (non-blocking): {e}")
+
+        await self.db.flush()
 
         yield {
             "type": "assistant_message_saved",
@@ -314,10 +368,18 @@ class AgentLoop:
         return list(reversed(messages))
 
     def _build_llm_messages(
-        self, history: List[Message], user_message: str
+        self,
+        history: List[Message],
+        user_message: str,
+        memory_context: str = "",
     ) -> List[LLMMessage]:
-        """Build the message list for the LLM."""
-        llm_messages = [LLMMessage(role="system", content=self.agent.system_prompt)]
+        """Build the message list for the LLM with memory context."""
+        # Build system prompt with memory
+        system_prompt = self.agent.system_prompt
+        if memory_context:
+            system_prompt += f"\n\n---\n## ذاكرتي عنك وعن محادثاتنا السابقة:\n{memory_context}\n\nاستخدم هذه المعلومات لتخصيص ردودك. لا تذكر صراحةً أنك تستخدم ذاكرة - فقط استخدمها بطبيعية."
+
+        llm_messages = [LLMMessage(role="system", content=system_prompt)]
 
         for msg in history:
             if msg.role == MessageRole.USER:
