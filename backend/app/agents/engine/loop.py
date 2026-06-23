@@ -27,8 +27,9 @@ logger = logging.getLogger(__name__)
 class AgentLoop:
     """Agent loop with tool calling support."""
 
-    MAX_ITERATIONS = 15
-    MAX_TOOL_CALLS = 8
+    MAX_ITERATIONS = 5  # 1 initial + up to 4 follow-ups after tools
+    MAX_TOOL_CALLS_PER_ITERATION = 3  # max parallel tool calls in one LLM response
+    MAX_TOTAL_TOOL_CALLS = 6  # absolute max across entire turn
 
     def __init__(
         self,
@@ -141,13 +142,19 @@ class AgentLoop:
             if not iteration_tool_calls:
                 break
 
-            # Process tool calls
-            if tool_call_count + len(iteration_tool_calls) > self.MAX_TOOL_CALLS:
-                yield {
-                    "type": "error",
-                    "content": "تم الوصول للحد الأقصى من استدعاءات الأدوات",
-                }
-                break
+            # Cap tool calls per iteration (avoid LLM spamming many calls at once)
+            iteration_tool_calls = iteration_tool_calls[:self.MAX_TOOL_CALLS_PER_ITERATION]
+
+            # Check global tool call limit
+            if tool_call_count + len(iteration_tool_calls) > self.MAX_TOTAL_TOOL_CALLS:
+                # Tell LLM to wrap up - we've used enough tools
+                llm_messages.append(LLMMessage(
+                    role="system",
+                    content="لقد استخدمت ما يكفي من الأدوات. استخدم المعلومات المتاحة لديك لكتابة الإجابة النهائية للمستخدم. لا تستدعِ المزيد من الأدوات.",
+                ))
+                # Continue loop to get final answer (no more tool calls will be allowed)
+                iteration_tool_calls = []
+                continue
 
             # Add assistant message with tool calls to history
             llm_messages.append(LLMMessage(
