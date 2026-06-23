@@ -1,0 +1,135 @@
+/**
+ * Onyx-inspired Design System for Ai NorX
+ * Adapted from Onyx's Opal design system (@onyx-ai/opal)
+ * License: MIT (Onyx Community Edition)
+ */
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Design Tokens (from Onyx primitives + semantic)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+:root {
+  /* Grayscale primitives (from Onyx) */
+  --grey-100: #000000;
+  --grey-90: #1a1a1a;
+  --grey-80: #333333;
+  --grey-70: #4d4d4d;
+  --grey-60: #555555;
+  --grey-50: #808080;
+  --grey-40: #a4a4a4;
+  --grey-30: #b2b2b2;
+  --grey-20: #cccccc;
+  --grey-10: #e6e6e6;
+  --grey-08: #ebebeb;
+  --grey-06: #f0f0f0;
+  --grey-04: #f5f5f5;
+  --grey-02: #fafafa;
+  --grey-00: #ffffff;
+
+  /* Semantic colors - Light mode (Onyx) */
+  --text-01: rgba(0, 0, 0, 0.20);
+  --text-02: rgba(0, 0, 0, 0.45);
+  --text-03: rgba(0, 0, 0, 0.55);
+  --text-04: rgba(0, 0, 0, 0.75);
+  --text-05: rgba(0, 0, 0, 0.90);
+
+  --text-inverted-01: rgba(255, 255, 255, 0.20);
+  --text-inverted-02: rgba(255, 255, 255, 0.45);
+  --text-inverted-03: rgba(255, 255, 255, 0.60);
+  --text-inverted-04: rgba(255, 255, 255, 0.85);
+  --text-inverted-05: rgba(255, 255, 255, 0.95);
+
+  --background-strong: #ffffff;
+  --background-weak: var(--grey-04);
+  --background-weaker: var(--grey-06);
+  --background-weakest: var(--grey-02);
+  --background-overlay: rgba(0, 0, 0, 0.40);
+
+  --border-01: var(--grey-10);
+  --border-02: var(--grey-08);
+  --border-03: var(--grey-06);
+
+  /* Status colors */
+  --status-success-01: #15803d;
+  --status-success-02: #22c55e;
+  --status-error-01: #b91c1c;
+  --status-error-02: #ef4444;
+  --status-warning-01: #b45309;
+  --status-warning-02: #f59e0b;
+  --status-info-01: #1d4ed8;
+  --status-info-02: #3b82f6;
+
+  /* Brand accent (Onyx uses neutral, we add subtle violet) */
+  --accent-strong: #5b21b6;
+  --accent-weak: #8b5cf6;
+  --accent-weaker: #c4b5fd;
+
+  /* Shadows (Onyx) */
+  --shadow-01: rgba(0, 0, 0, 0.04);
+  --shadow-02: rgba(0, 0, 0, 0.08);
+  --shadow-03: rgba(0, 0, 0, 0.12);
+
+  /* Typography (Onyx) */
+  --font-sans: "IBM Plex Sans Arabic", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Spacing scale (Onyx 4px base) */
+  --space-01: 4px;
+  --space-02: 8px;
+  --space-03: 12px;
+  --space-04: 16px;
+  --space-05: 20px;
+  --space-06: 24px;
+  --space-08: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Z-index (Onyx) */
+  --z-base: 0;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-dropdown: 1000;
+  --z-modal: 2000;
+  --z-toast: 3000;
+
+  /* Sidebar width (Onyx) */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 56px;
+}
+
+/* Dark mode (Onyx) */
+.dark {
+  --text-01: rgba(255, 255, 255, 0.20);
+  --text-02: rgba(255, 255, 255, 0.45);
+  --text-03: rgba(255, 255, 255, 0.55);
+  --text-04: rgba(255, 255, 255, 0.75);
+  --text-05: rgba(255, 255, 255, 0.90);
+
+  --text-inverted-01: rgba(0, 0, 0, 0.20);
+  --text-inverted-02: rgba(0, 0, 0, 0.45);
+  --text-inverted-03: rgba(0, 0, 0, 0.60);
+  --text-inverted-04: rgba(0, 0, 0, 0.85);
+  --text-inverted-05: rgba(0, 0, 0, 0.95);
+
+  --background-strong: #1a1a1a;
+  --background-weak: #262626;
+  --background-weaker: #333333;
+  --background-weakest: #1a1a1a;
+  --background-overlay: rgba(0, 0, 0, 0.60);
+
+  --border-01: var(--grey-70);
+  --border-02: var(--grey-80);
+  --border-03: var(--grey-80);
+
+  --shadow-01: rgba(0, 0, 0, 0.20);
+  --shadow-02: rgba(0, 0, 0, 0.40);
+  --shadow-03: rgba(0, 0, 0, 0.60);
+}

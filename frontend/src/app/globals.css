@@ -1,62 +1,47 @@
 @import "tailwindcss";
+@import "./styles/design-tokens.css";
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Onyx-inspired Theme Configuration
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 @theme {
-  --font-sans: "IBM Plex Sans Arabic", "Cairo", "Tajawal", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", "Inter", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", "JetBrains Mono", monospace;
+
+  /* Onyx color tokens as Tailwind colors */
+  --color-background-strong: var(--background-strong);
+  --color-background-weak: var(--background-weak);
+  --color-background-weaker: var(--background-weaker);
+  --color-background-weakest: var(--background-weakest);
+
+  --color-text-01: var(--text-01);
+  --color-text-02: var(--text-02);
+  --color-text-03: var(--text-03);
+  --color-text-04: var(--text-04);
+  --color-text-05: var(--text-05);
+
+  --color-border-01: var(--border-01);
+  --color-border-02: var(--border-02);
+  --color-border-03: var(--border-03);
+
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-weak: var(--accent-weak);
+  --color-accent-weaker: var(--accent-weaker);
+
+  --color-status-success: var(--status-success-02);
+  --color-status-error: var(--status-error-02);
+  --color-status-warning: var(--status-warning-02);
+  --color-status-info: var(--status-info-02);
 }
 
-:root {
-  --background: 0 0% 100%;
-  --foreground: 224 71.4% 4.1%;
-  --card: 0 0% 100%;
-  --card-foreground: 224 71.4% 4.1%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 224 71.4% 4.1%;
-  --primary: 262.1 83.3% 57.8%;
-  --primary-foreground: 210 20% 98%;
-  --secondary: 220 14.3% 95.9%;
-  --secondary-foreground: 220.9 39.3% 11%;
-  --muted: 220 14.3% 95.9%;
-  --muted-foreground: 220 8.9% 46.1%;
-  --accent: 220 14.3% 95.9%;
-  --accent-foreground: 220.9 39.3% 11%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 20% 98%;
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --ring: 262.1 83.3% 57.8%;
-  --radius: 0.5rem;
-
-  /* LibreChat-inspired greens for chat accents */
-  --green: 142 76% 36%;
-  --green-foreground: 355.7 100% 97.3%;
-}
-
-.dark {
-  --background: 224 71.4% 4.1%;
-  --foreground: 210 20% 98%;
-  --card: 224 71.4% 4.1%;
-  --card-foreground: 210 20% 98%;
-  --popover: 224 71.4% 4.1%;
-  --popover-foreground: 210 20% 98%;
-  --primary: 263.4 70% 50.4%;
-  --primary-foreground: 210 20% 98%;
-  --secondary: 215 27.9% 16.9%;
-  --secondary-foreground: 210 20% 98%;
-  --muted: 215 27.9% 16.9%;
-  --muted-foreground: 217.9 10.6% 64.9%;
-  --accent: 215 27.9% 16.9%;
-  --accent-foreground: 210 20% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 20% 98%;
-  --border: 215 27.9% 16.9%;
-  --input: 215 27.9% 16.9%;
-  --ring: 263.4 70% 50.4%;
-}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Base Styles (Onyx-inspired)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    border-color: var(--border-01);
   }
 
   html {
@@ -64,13 +49,15 @@
   }
 
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--background-strong);
+    color: var(--text-05);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     height: 100vh;
     overflow: hidden;
+    font-size: 14px;
+    line-height: 1.5;
   }
 
   [dir="rtl"] {
@@ -81,7 +68,7 @@
     text-align: left;
   }
 
-  /* Code blocks always LTR */
+  /* Code blocks always LTR (Onyx pattern) */
   .code-block, pre, code {
     direction: ltr !important;
     text-align: left !important;
@@ -89,8 +76,11 @@
   }
 }
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Custom Scrollbar (Onyx style)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
 @layer utilities {
-  /* Custom scrollbar - LibreChat style */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -101,15 +91,32 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.3);
+    background: var(--text-02);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.5);
+    background: var(--text-03);
   }
 
-  /* Animations */
+  /* Onyx shadow utilities */
+  .shadow-00 {
+    box-shadow: 0px 0px 2px 1px var(--shadow-01);
+  }
+
+  .shadow-01 {
+    box-shadow:
+      0px 2px 12px 0px var(--shadow-02),
+      0px 0px 4px 1px var(--shadow-02);
+  }
+
+  .shadow-02 {
+    box-shadow:
+      0px 2px 24px 0px var(--shadow-03),
+      0px 0px 12px 1px var(--shadow-03);
+  }
+
+  /* Onyx animations */
   .animate-in {
     animation: fade-in 0.2s ease-out;
   }
@@ -124,11 +131,11 @@
   }
 
   @keyframes slide-up {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Typing indicator dots */
+  /* Typing indicator dots (Onyx chat) */
   .typing-dot {
     animation: typing 1.4s infinite;
   }
@@ -138,13 +145,26 @@
 
   @keyframes typing {
     0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-    30% { opacity: 1; transform: translateY(-4px); }
+    30% { opacity: 1; transform: translateY(-3px); }
   }
 
-  /* Markdown styles - LibreChat inspired */
+  /* Onyx no-scrollbar utility */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Markdown styles (Onyx chat prose)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
   .prose-chat {
-    color: hsl(var(--foreground));
-    line-height: 1.7;
+    color: var(--text-05);
+    line-height: 1.65;
+    font-size: 14px;
   }
 
   .prose-chat p {
@@ -154,10 +174,11 @@
   .prose-chat h1, .prose-chat h2, .prose-chat h3 {
     font-weight: 600;
     margin: 1em 0 0.5em;
+    color: var(--text-05);
   }
 
-  .prose-chat h1 { font-size: 1.5em; }
-  .prose-chat h2 { font-size: 1.3em; }
+  .prose-chat h1 { font-size: 1.4em; }
+  .prose-chat h2 { font-size: 1.25em; }
   .prose-chat h3 { font-size: 1.1em; }
 
   .prose-chat ul, .prose-chat ol {
@@ -169,23 +190,31 @@
     margin: 0.25em 0;
   }
 
+  .prose-chat ul > li > p,
+  .prose-chat ol > li > p {
+    margin-top: 0;
+    margin-bottom: 0;
+    display: inline;
+  }
+
   .prose-chat code {
-    background: hsl(var(--muted));
+    background: var(--background-weaker);
     padding: 0.15em 0.4em;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-size: 0.9em;
     font-family: var(--font-mono);
   }
 
   .prose-chat pre {
-    background: hsl(220 13% 12%);
-    color: hsl(0 0% 95%);
+    background: #1a1a1a;
+    color: #f5f5f5;
     padding: 1em;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     overflow-x: auto;
     margin: 0.75em 0;
     direction: ltr !important;
     text-align: left !important;
+    font-size: 13px;
   }
 
   .prose-chat pre code {
@@ -195,15 +224,15 @@
   }
 
   .prose-chat blockquote {
-    border-inline-start: 3px solid hsl(var(--primary));
+    border-inline-start: 3px solid var(--accent-weak);
     padding-inline-start: 1em;
     margin: 0.75em 0;
-    color: hsl(var(--muted-foreground));
+    color: var(--text-03);
     font-style: italic;
   }
 
   .prose-chat a {
-    color: hsl(var(--primary));
+    color: var(--accent-weak);
     text-decoration: underline;
   }
 
@@ -214,13 +243,13 @@
   }
 
   .prose-chat th, .prose-chat td {
-    border: 1px solid hsl(var(--border));
+    border: 1px solid var(--border-01);
     padding: 0.5em 0.75em;
     text-align: right;
   }
 
   .prose-chat th {
-    background: hsl(var(--muted));
+    background: var(--background-weaker);
     font-weight: 600;
   }
 }

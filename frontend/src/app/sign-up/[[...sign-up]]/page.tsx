@@ -2,28 +2,37 @@ import { SignUp } from "@clerk/nextjs";
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen flex items-center justify-center bg-background-weak">
       <div className="w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="w-12 h-12 rounded-xl bg-accent-strong flex items-center justify-center mx-auto mb-4 shadow-01">
+            <span className="text-white font-bold text-xl">N</span>
+          </div>
+          <h1 className="text-2xl font-semibold mb-1 text-text-05">
             Ai NorX
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-text-03 text-sm">
             انضم إلى منصة الوكلاء الأذكياء
           </p>
         </div>
-        <SignUp
-          appearance={{
-            elements: {
-              card: "shadow-xl rounded-2xl border-0",
-              headerTitle: "text-right",
-              headerSubtitle: "text-right",
-              formButtonPrimary: "bg-blue-600 hover:bg-blue-700",
-              socialButtonsBlockButton: "rounded-lg",
-              formFieldInput: "rounded-lg",
-            },
-          }}
-        />
+        <div className="bg-background-strong rounded-xl shadow-01 p-6">
+          <SignUp
+            appearance={{
+              elements: {
+                card: "shadow-none border-0",
+                headerTitle: "text-text-05",
+                headerSubtitle: "text-text-03",
+                formButtonPrimary:
+                  "bg-accent-strong hover:bg-accent-strong/90 text-sm",
+                socialButtonsBlockButton:
+                  "border-border-01 hover:bg-background-weak text-text-05 rounded-lg",
+                formFieldInput:
+                  "border-border-01 rounded-lg bg-background-strong text-text-05",
+                footerActionLink: "text-accent-weak hover:text-accent-strong",
+              },
+            }}
+          />
+        </div>
       </div>
     </div>
   );
